@@ -77,4 +77,20 @@ class login
         $_SESSION["user_info"] = null;
     }
 
+    public function signup($name, $email, $password)
+    {
+        $sql = "INSERT INTO users (`username`,`mail`,`password`) VALUES (?,?,?)";
+
+        $sth = $this->dbh->prepare($sql);
+
+        $sth->bindParam(1, $name, PDO::PARAM_STR);
+        $sth->bindParam(2, $email, PDO::PARAM_STR);
+        $sth->bindParam(3, $password, PDO::PARAM_STR);
+        $sth->execute();
+
+        $userInfo = $sth->fetch(PDO::FETCH_ASSOC);
+        session_start();
+        $_SESSION["user_info"] = $userInfo;
+        return $userInfo;
+    }
 }
