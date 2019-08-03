@@ -42,15 +42,27 @@ class login
 
     public function login($email, $password)
     {
-        $sql = "SELECT * FROM users WHERE mail = ? AND password = ?";
+        /*
+         * ログイン失敗なら、エラーを返します
+         * 成功なら、
+         */
+        $sql = "SELECT * FROM users WHERE mail = ?";
 
         $sth = $this->dbh->prepare($sql);
 
         $sth->bindParam(1, $email, PDO::PARAM_STR);
-        $sth->bindParam(2, $password, PDO::PARAM_STR);
         $sth->execute();
 
         $userInfo = $sth->fetch(PDO::FETCH_ASSOC);
+
+        if (!$userInfo)
+            //ユーザー名が間違えている
+            return "no username";
+
+        if (!password_verify($password, $userInfo['password']))
+            //パスワードが間違えている
+            return "incorrect password";
+
         session_start();
         $_SESSION["user_info"] = $userInfo;
         return $userInfo;
@@ -82,10 +94,11 @@ class login
         $sql = "INSERT INTO users (`username`,`mail`,`password`) VALUES (?,?,?)";
 
         $sth = $this->dbh->prepare($sql);
+//        echo password_hash($password, PASSWORD_BCRYPT);
 
         $sth->bindParam(1, $name, PDO::PARAM_STR);
         $sth->bindParam(2, $email, PDO::PARAM_STR);
-        $sth->bindParam(3, $password, PDO::PARAM_STR);
+        $sth->bindParam(3, password_hash($password, PASSWORD_BCRYPT), PDO::PARAM_STR);
         $sth->execute();
 
         $userInfo = $sth->fetch(PDO::FETCH_ASSOC);
