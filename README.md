@@ -1,5 +1,11 @@
 # php-login
 
+## install 
+
+```bash
+composer require josegonzalez/dotenv 
+```
+
 ## usage 
 
 
