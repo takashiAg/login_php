@@ -57,11 +57,11 @@ class login
 
         if (!$userInfo)
             //ユーザー名が間違えている
-            return "no username";
+            return null;
 
         if (!password_verify($password, $userInfo['password']))
             //パスワードが間違えている
-            return "incorrect password";
+            return null;
 
         session_start();
         $_SESSION["user_info"] = $userInfo;
